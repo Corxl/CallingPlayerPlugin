@@ -39,7 +39,7 @@ public class TpacceptCommand implements CommandExecutor {
             return false;
         }
         Main.teleportingPlayers.put(tp.getFrom().getUniqueId().toString(), tp);
-        tp.getRequestSender().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&3Your request was &a&nAccepted&3!" + (tp.isTpaHere() ? (Main.countdown > 0 ? " &cDon't move!" : "") : "")));
+        tp.getRequestSender().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&3Your request was &a&nAccepted&3!" + (tp.isTpaHere() ? "" : (Main.countdown > 0 ? " &cDon't move!" : ""))));
         tp.getRequestReceiver().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "")
                 + "&3You have &a&nAccepted&r&7 " + (Main.useDisplayName ? tp.getRequestSender().getDisplayName() : tp.getRequestSender().getName()) + "&3's &3request!"));
 
@@ -50,12 +50,6 @@ public class TpacceptCommand implements CommandExecutor {
                 public void run() {
                     if (countdown <=0) {
                         Main.teleportingPlayers.remove(tp.getFrom().getUniqueId().toString());
-//                        if (!Main.eco.withdrawPlayer(tp.getFrom(), Main.teleportCost).transactionSuccess()) {
-//                            tp.getFrom().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have &a$" + Main.teleportCost + "&4!"));
-//                            tp.getTo().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4The teleport was cancelled due to the &7" + (Main.useDisplayName ? tp.getFrom().getDisplayName() : tp.getFrom().getName()) + "'s &4insufficient funds."));
-//                            cancel();
-//                            return;
-//                        }
                         if (!(Main.eco.getBalance(tp.getFrom())>=Main.teleportCost)) {
                             tp.getFrom().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have &a$" + Main.teleportCost + "&4!"));
                             tp.getTo().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4The teleport was cancelled due to the &7" + (Main.useDisplayName ? tp.getFrom().getDisplayName() : tp.getFrom().getName()) + "'s &4insufficient funds."));
@@ -64,11 +58,8 @@ public class TpacceptCommand implements CommandExecutor {
                         }
 
                         tp.getFrom().sendMessage((Main.pluginPrefix ? Main.prefix + " " : "") + ChatColor.DARK_AQUA + "Teleporting...");
-                        if (!(Main.teleportCost<=0))
-                            tp.getFrom().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&a$" + Main.teleportCost + " &3has been withdrawn from your account."));
                         TeleportEventHandler.chargeQueue.add(tp.getFrom().getUniqueId().toString());
                         tp.getFrom().teleport(tp.getTo().getLocation());
-                        Main.playerCooldowns.put(tp.getFrom().getUniqueId().toString(), System.currentTimeMillis());
                         cancel();
                         return;
                     }
@@ -78,10 +69,8 @@ public class TpacceptCommand implements CommandExecutor {
             }.runTaskTimer(Main.getPlugin(Main.class), 0, 20L));
         } else {
             tp.getFrom().sendMessage((Main.pluginPrefix ? Main.prefix + " " : "") + ChatColor.DARK_AQUA + "Teleporting...");
-            if (!(Main.teleportCost<=0))
-                tp.getFrom().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&a$" + Main.teleportCost + " &3has been withdrawn from your account."));
+            TeleportEventHandler.chargeQueue.add(tp.getFrom().getUniqueId().toString());
             tp.getFrom().teleport(tp.getTo().getLocation());
-            Main.playerCooldowns.put(tp.getFrom().getUniqueId().toString(), System.currentTimeMillis());
         }
         Main.tpRequest.remove(player.getUniqueId().toString());
         return false;

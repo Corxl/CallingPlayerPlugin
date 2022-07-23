@@ -52,6 +52,7 @@ public class TeleportEventHandler implements Listener {
         Main.eco.withdrawPlayer(event.getPlayer(), Main.teleportCost);
         event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&a$" + Main.teleportCost + " &3has been withdrawn from your account."));
         chargeQueue.remove(event.getPlayer().getUniqueId().toString());
+        Main.playerCooldowns.put(event.getPlayer().getUniqueId().toString(), System.currentTimeMillis());
     }
 
 }

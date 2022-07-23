@@ -42,7 +42,7 @@ public class TpahereCommand implements CommandExecutor {
                 }
             }
 
-        if (Main.teleportingPlayers.containsKey(target.getUniqueId().toString()) || Main.teleportingPlayers.containsKey(player.getUniqueId().toString())) {
+        if (Main.tpRequest.containsKey(target.getUniqueId().toString()) || Main.tpRequest.containsKey(player.getUniqueId().toString())) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', (Main.pluginPrefix ? Main.prefix + " " : "") + "&4You or the target player already has an active TP request!"));
             return false;
         }
