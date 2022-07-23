@@ -1,0 +1,19 @@
+# -----------------------------------
+# Author: Corxl
+# Discord tag: Corxl#5755
+# -----------------------------------
+# Start of config
+
+# Teleport countdown in seconds. default: 3
+teleport-countdown: 3
+# Teleport cool-down in seconds. default: 300
+teleport-cooldown: 300
+# Cost to teleport. default: 500.00
+teleport-cost: 500.00
+# Determines wether or not the player can move while they are teleporting. default: false
+allow-tp-movement: false
+# Shows the plugin prefix for non-admin commands. default: true
+show-plugin-prefix: true
+# Uses the player's custom display-name if there is one. default: true
+# If false, it will use the original player name.
+use-display-name: true

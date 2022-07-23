@@ -1,0 +1,28 @@
+name: EcoTP
+version: '${project.version}'
+main: me.corxl.CorxlTeleport.Main
+api-version: 1.18
+
+depend: [Vault]
+softdepend: [Essentials]
+
+commands:
+  tpa:
+    permission: ecotp.tpa
+    permission-message: §l§2[§3EcoTP§2]§r §o§cYou do not have permission!
+  tpahere:
+    permission: ecotp.tpahere
+    permission-message: §l§2[§3EcoTP§2]§r §o§cYou do not have permission!
+  tpaccept:
+    permission: ecotp.tpaccept
+    permission-message: §l§2[§3EcoTP§2]§r §o§cYou do not have permission!
+  tpadeny:
+    permission: ecotp.tpadeny
+    permission-message: §l§2[§3EcoTP§2]§r §o§cYou do not have permission!
+  ecotpreload:
+    permission: ecotp.reload
+    permission-message: §l§2[§3EcoTP§2]§r §o§cYou do not have permission!
+
+permissions:
+  ecotp.cooldown.bypass:
+    description: Allows the player to ignore cooldown restrictions.
