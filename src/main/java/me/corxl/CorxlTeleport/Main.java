@@ -1,10 +1,12 @@
 package me.corxl.CorxlTeleport;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import me.corxl.CorxlTeleport.Commands.*;
 import me.corxl.CorxlTeleport.Events.TeleportEventHandler;
+import me.corxl.CorxlTeleport.Utils.UpdateChecker;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -42,7 +44,37 @@ public class Main extends JavaPlugin {
         this.saveDefaultConfig();
         this.saveConfig();
         loadConfig();
+        this.getLogger().info("Registering Events...");
         this.getServer().getPluginManager().registerEvents(new TeleportEventHandler(this), this);
+        this.getLogger().info("Registering Commands...");
+        this.registerCommands();
+        UpdateChecker checker = null;
+        try {
+            checker = new UpdateChecker(this.getDescription().getVersion(), 103303);
+        } catch (IOException e) {
+            this.getLogger().info("Could not find latest version from Spigot.");
+        }
+        this.getLogger().info("------------Version-------------");
+        if (checker!=null) {
+            this.getLogger().info("- Current Version: " + this.getDescription().getVersion() + ". " + (checker.isUpToDate() ? "(Latest)" : "(Out of date)"));
+            if (!checker.isUpToDate()) {
+                this.getLogger().info("- This version is out-of-date!");
+                this.getLogger().info("- Please consider updating to the most recent version.");
+                this.getLogger().info("- Link: https://www.spigotmc.org/resources/economytp.103303/.");
+            }
+        } else {
+            this.getLogger().info("- Current Version: " + this.getDescription().getVersion() + ".");
+        }
+        this.getLogger().info("------------Settings------------");
+        this.getLogger().info("- TP cooldown: " + cooldown + " second" +(cooldown == 1 ? "s" : "") + ".");
+        this.getLogger().info("- Allow movement while teleporting: " + enableMovement + ".");
+        this.getLogger().info("- TP cost: $" + teleportCost + ".");
+        this.getLogger().info("--------------------------------");
+    }
+
+    public void onDisable() {}
+
+    private void registerCommands() {
         this.getCommand("tpa").setExecutor(new TpaCommand());
         this.getCommand("tpaccept").setExecutor(new TpacceptCommand());
         this.getCommand("tpadeny").setExecutor(new TpadenyCommand());
@@ -55,8 +87,6 @@ public class Main extends JavaPlugin {
         this.getCommand("tpahere").setTabCompleter(new PlayerNamesTab());
         this.getCommand("ecotpreload").setTabCompleter(new PlayerNamesTab());
     }
-
-    public void onDisable() {}
 
     private boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economy = getServer().getServicesManager().getRegistration(Economy.class);
