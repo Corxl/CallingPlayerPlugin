@@ -1,11 +1,13 @@
 package me.corxl.CorxlTeleport.Commands;
 
 import me.corxl.CorxlTeleport.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
 public class TpahereCommand implements CommandExecutor {
@@ -37,7 +39,7 @@ public class TpahereCommand implements CommandExecutor {
             if (Main.playerCooldowns.containsKey(target.getUniqueId().toString())) {
                 int cooldown = (int)(System.currentTimeMillis() - Main.playerCooldowns.get(target.getUniqueId().toString()))/1000;
                 if (cooldown < Main.cooldown) {
-                    player.sendMessage((Main.pluginPrefix ? Main.prefix + " " : "") + ChatColor.GRAY + (Main.useDisplayName ? target.getDisplayName() : "&7" + target.getName()) + ChatColor.DARK_AQUA + " has to wait " + ChatColor.GOLD + (Main.cooldown - cooldown) + ChatColor.RED + " second(s) before they can tp again!");
+                    player.sendMessage((Main.pluginPrefix ? Main.prefix + " " : "") + ChatColor.GRAY + (Main.useDisplayName ? target.getDisplayName() : "&7" + target.getName()) + ChatColor.DARK_AQUA + " has to wait " + ChatColor.GOLD + (Main.cooldown - cooldown) + ChatColor.DARK_AQUA + " second(s) before they can tp again!");
                     return false;
                 }
             }
@@ -58,6 +60,13 @@ public class TpahereCommand implements CommandExecutor {
         }
         TeleportRequest tp = new TeleportRequest(player, target, true);
         Main.tpRequest.put(target.getUniqueId().toString(), tp);
+        Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), ()-> {
+            if (Main.tpRequest.containsKey(target.getUniqueId().toString())){
+                TeleportRequest request = Main.tpRequest.get(target.getUniqueId().toString());
+                request.getRequestSender().sendMessage(ChatColor.translateAlternateColorCodes('&',(Main.pluginPrefix ? Main.prefix + " " : "") + "&7Your request has timed out."));
+                Main.tpRequest.remove(target.getUniqueId().toString());
+            }
+        }, 300);
         Main.playerCooldowns.put(player.getUniqueId().toString(), System.currentTimeMillis());
 
         player.sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&r&3Your request was sent to &r&7" + target.getName() + "&r&3!"));

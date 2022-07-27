@@ -1,6 +1,7 @@
 package me.corxl.CorxlTeleport.Commands;
 
 import me.corxl.CorxlTeleport.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -54,6 +55,13 @@ public class TpaCommand implements CommandExecutor {
         }
         TeleportRequest tp = new TeleportRequest(player, target, false);
         Main.tpRequest.put(target.getUniqueId().toString(), tp);
+        Bukkit.getScheduler().runTaskLater(Main.getPlugin(Main.class), ()-> {
+            if (Main.tpRequest.containsKey(target.getUniqueId().toString())){
+                TeleportRequest request = Main.tpRequest.get(target.getUniqueId().toString());
+                request.getRequestSender().sendMessage(ChatColor.translateAlternateColorCodes('&',(Main.pluginPrefix ? Main.prefix + " " : "") + "&7Your request has timed out."));
+                Main.tpRequest.remove(target.getUniqueId().toString());
+            }
+        }, 300);
 
         player.sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&r&3Your request was sent to &r&7" + target.getName() + "&r&3!"));
         target.spigot().sendMessage(Main.sendRequest(player, target, false));

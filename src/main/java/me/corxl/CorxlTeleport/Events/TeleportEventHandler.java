@@ -43,15 +43,16 @@ public class TeleportEventHandler implements Listener {
 
     @EventHandler (priority = EventPriority.MONITOR)
     public void onTeleport(PlayerTeleportEvent event) {
-        if ((Main.teleportCost<=0)) return;
         if (!chargeQueue.contains(event.getPlayer().getUniqueId().toString())) return;
         if (event.isCancelled()) {
             event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', (Main.pluginPrefix ? Main.prefix + " " : "") + "&4You were unable to teleport. You have not been charged."));
             return;
         }
-        Main.eco.withdrawPlayer(event.getPlayer(), Main.teleportCost);
-        event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&a$" + Main.teleportCost + " &3has been withdrawn from your account."));
-        chargeQueue.remove(event.getPlayer().getUniqueId().toString());
+        if (!(Main.teleportCost<=0)) {
+            Main.eco.withdrawPlayer(event.getPlayer(), Main.teleportCost);
+            event.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&',  (Main.pluginPrefix ? Main.prefix + " " : "") + "&a$" + Main.teleportCost + " &3has been withdrawn from your account."));
+            chargeQueue.remove(event.getPlayer().getUniqueId().toString());
+        }
         Main.playerCooldowns.put(event.getPlayer().getUniqueId().toString(), System.currentTimeMillis());
     }
 
